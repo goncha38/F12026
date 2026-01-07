@@ -1,0 +1,52 @@
+<h2>Administración de carreras</h2>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Carrera</th>
+        <th>Fecha carrera</th>
+        <th>Fecha límite pronóstico</th>
+        <th>Estado pronóstico</th>
+        <th>Acción</th>
+        <th>Guardar</th>
+    </tr>
+
+    {% for c in carreras %}
+    <tr style="background-color: {{ '#d4edda' if c.pronostico_abierto else '#f8d7da' }};">
+        <form method="POST">
+
+            <td>{{ c.pais }}</td>
+            <td>{{ c.fecha }}</td>
+
+            <td>
+                <input
+                    type="datetime-local"
+                    name="fecha_limite_pronostico"
+                    value="{{ c.fecha_limite_pronostico|replace(' ', 'T') if c.fecha_limite_pronostico }}"
+                >
+            </td>
+
+            <td style="text-align:center;">
+                {% if c.pronostico_abierto %}
+                    🟢 Abierto
+                {% else %}
+                    🔴 Cerrado
+                {% endif %}
+            </td>
+
+            <td style="text-align:center;">
+                <input type="checkbox"
+                       name="pronostico_abierto"
+                       value="1"
+                       {% if c.pronostico_abierto %}checked{% endif %}>
+                Abrir pronóstico
+            </td>
+
+            <td>
+                <input type="hidden" name="carrera_id" value="{{ c.id }}">
+                <button type="submit">Guardar</button>
+            </td>
+
+        </form>
+    </tr>
+    {% endfor %}
+</table>

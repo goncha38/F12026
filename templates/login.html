@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+{% if session.user_name %}
+    <div style="float:right">
+        <span style="font-size: 24px;">{{ session.avatar }}</span>
+        {{ session.user_name }}
+        |
+        <a href="/logout">Cerrar sesión</a>
+    </div>
+{% endif %}
+
+<h2>Login</h2>
+
+<form method="POST">
+    Email: <input type="email" name="email" required><br>
+    Contraseña: <input type="password" name="password" required><br>
+    <button type="submit">Ingresar</button>
+</form>
+</body>
+</html>

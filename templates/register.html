@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<h2>Registro de usuario</h2>
+
+{% if error %}
+    <p style="color: red;"><strong>{{ error }}</strong></p>
+{% endif %}
+
+<form method="POST">
+
+    <label>Nombre</label><br>
+    <input type="text" name="nombre" required><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Contraseña</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <label>Repetir contraseña</label><br>
+    <input type="password" name="password2" required><br><br>
+
+    <h3>Elegí tu avatar</h3>
+
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        {% set avatars = [
+            "avatar1.png", "avatar2.png", "avatar3.png", "avatar4.png",
+            "avatar5.png", "avatar6.png", "avatar7.png", "avatar8.png",
+            "avatar9.png", "avatar10.png"
+        ] %}
+
+        {% for a in avatars %}
+            <label style="text-align: center; cursor: pointer;">
+                <input type="radio" name="avatar" value="{{ a }}" {% if loop.first %}checked{% endif %}>
+                <br>
+                <img src="{{ url_for('static', filename='avatars/' ~ a) }}"
+                     width="60" height="60"
+                     style="border-radius: 50%; border: 2px solid #ccc;">
+            </label>
+        {% endfor %}
+    </div>
+
+    <br><br>
+
+    <button type="submit">Registrarme</button>
+
+</form>
+
+<hr>
+
+<p>
+    ¿Ya tenés cuenta?
+    <a href="/login">Iniciar sesión</a>
+</p>
+
+</body>
+</html>

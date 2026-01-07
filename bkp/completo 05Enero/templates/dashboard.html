@@ -1,0 +1,60 @@
+<h2>Próxima carrera</h2>
+
+{% if horas_restantes is not none %}
+    <div style="padding:10px;background:#fff3cd;border:1px solid #ffeeba;">
+        ⏳ Quedan <strong>{{ horas_restantes }} horas</strong> para cerrar el pronóstico
+    </div>
+{% else %}
+    <div style="padding:10px;background:#e2e3e5;">
+        ⏳ Fecha límite aún no definida
+    </div>
+{% endif %}
+
+<h3>Próximas carreras</h3>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Carrera</th>
+        <th>Fecha</th>
+        <th>Fecha límite</th>
+        <th>Estado</th>
+        <th>Acción</th>
+    </tr>
+
+    {% for c in carreras %}
+    <tr>
+        <td>{{ c.pais }}</td>
+        <td>{{ c.fecha }}</td>
+
+        <td>
+            {% if c.fecha_limite_pronostico %}
+                {{ c.fecha_limite_pronostico }}
+            {% else %}
+                <em>A definir</em>
+            {% endif %}
+        </td>
+
+        <td>
+            {% if c.pronostico_abierto %}
+                🟢 Abierto
+            {% else %}
+                🔴 Cerrado
+            {% endif %}
+        </td>
+
+        <td>
+            {% if c.pronostico_abierto %}
+                <a href="/pronostico/{{ c.id }}">
+                    {% if c.pronosticado %}
+                        Ver / Editar
+                    {% else %}
+                        Cargar
+                    {% endif %}
+                </a>
+            {% else %}
+                —
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

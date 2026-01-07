@@ -1,0 +1,71 @@
+<h2>{{ carrera.pais }} – {{ carrera.fecha }}</h2>
+
+{% if carrera.pronostico_abierto %}
+    <p style="color:green;"><strong>🟢 Pronóstico ABIERTO</strong></p>
+{% else %}
+    <p style="color:red;"><strong>🔴 Pronóstico CERRADO</strong></p>
+{% endif %}
+
+{% if carrera.fecha_clasificacion %}
+    <p>
+        ⏳ Cierre estimado:
+        <span id="contador"></span>
+    </p>
+{% endif %}
+
+<hr>
+
+<h3>✅ Pronósticos cargados</h3>
+<ul>
+    {% for p in pronosticos %}
+        <li>{{ p.nombre }}</li>
+    {% else %}
+        <li>Nadie cargó todavía</li>
+    {% endfor %}
+</ul>
+
+<h3>⏳ Pendientes</h3>
+<ul>
+    {% for u in pendientes %}
+        <li>{{ u.nombre }}</li>
+    {% else %}
+        <li>Todos cargaron 🎉</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+{% if carrera.pronostico_abierto %}
+    <a href="/pronostico/{{ carrera.id }}">✍️ Cargar / editar pronóstico</a>
+{% else %}
+    <a href="/pronosticos_fecha/{{ carrera.id }}">👀 Ver pronósticos</a>
+{% endif %}
+
+<br><br>
+<a href="/ranking">📊 Ver ranking general</a>
+{% if segundos_restantes > 0 %}
+<script>
+    let segundos = {{ segundos_restantes }};
+    // contador JS
+</script>
+{% endif %}
+<script>
+{% if carrera.fecha_clasificacion %}
+const cierre = new Date("{{ carrera.fecha_clasificacion }}").getTime();
+const contador = document.getElementById("contador");
+
+setInterval(() => {
+    const ahora = new Date().getTime();
+    const diff = cierre - ahora;
+
+    if (diff <= 0) {
+        contador.innerHTML = "Cerrado";
+        return;
+    }
+
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    contador.innerHTML = h + "h " + m + "m";
+}, 1000);
+{% endif %}
+</script>

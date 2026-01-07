@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Control de Pronósticos</title>
+    <style>
+        table { border-collapse: collapse; }
+        th, td { padding: 6px 10px; border: 1px solid #ccc; text-align: center; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+
+<h2>Control de Pronósticos</h2>
+
+<table>
+    <tr>
+        <th>Usuario</th>
+        {% for c in carreras %}
+            <th>{{ c["pais"] }}<br>{{ c["fecha"]|datetimeformat }}</th>
+        {% endfor %}
+    </tr>
+
+    {% for u in usuarios %}
+    <tr>
+        <td><strong>{{ u["nombre"] }}</strong></td>
+
+        {% for c in carreras %}
+            <td>
+                {% if matriz[u["id"]].get(c["id"]) %}
+                    ✔️
+                {% else %}
+                    ⏳
+                {% endif %}
+            </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

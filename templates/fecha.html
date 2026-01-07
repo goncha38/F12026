@@ -1,0 +1,100 @@
+<h2>{{ carrera.pais }} – {{ carrera.fecha }}</h2>
+
+<hr>
+
+<h3>📝 Información de la fecha</h3>
+
+{% if session.admin %}
+<form method="post">
+    <textarea name="info_fecha" rows="5" style="width:100%">{{ carrera.info_fecha }}</textarea>
+    <br><br>
+    <button type="submit">Guardar info</button>
+</form>
+{% else %}
+<p>{{ carrera.info_fecha or "Sin información cargada." }}</p>
+{% endif %}
+{% if pendientes %}
+<div style="background:#ffeeba;padding:10px;margin-bottom:15px">
+    ⚠️ <strong>Pronósticos pendientes:</strong>
+    {{ pendientes | length }} participante(s) aún no cargaron.
+</div>
+{% endif %}
+{% if segundos_restantes is not none and segundos_restantes > 0 %}
+<script>
+    let segundos = {{ segundos_restantes }};
+    const el = document.getElementById("contador");
+
+    function tick() {
+        if (segundos <= 0) return;
+        segundos--;
+
+        let h = Math.floor(segundos / 3600);
+        let m = Math.floor((segundos % 3600) / 60);
+        let s = segundos % 60;
+
+        el.innerText = `${h}h ${m}m ${s}s`;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+</script>
+{% endif %}
+
+
+<hr>
+
+<h3>✅ Pronósticos cargados</h3>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Pole</th>
+            {% if carrera.sprint %}
+                <th>Sprint</th>
+            {% endif %}
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pronosticos %}
+        <tr>
+            <td>{{ p.usuario }}</td>
+            <td>{{ p.pole }}</td>
+            {% if carrera.sprint %}
+                <td>{{ p.sprint_ganador }}</td>
+            {% endif %}
+            <td>{{ p.p1 }}</td>
+            <td>{{ p.p2 }}</td>
+            <td>{{ p.p3 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+{% if carrera.pronostico_abierto %}
+    <a href="/pronostico/{{ carrera.id }}">
+        <button>Cargar / Editar pronóstico</button>
+    </a>
+{% else %}
+    <p><strong>Pronóstico cerrado</strong></p>
+{% endif %}
+
+
+<h3>⏳ Pendientes de cargar</h3>
+
+{% if pendientes %}
+<ul>
+    {% for u in pendientes %}
+        <li>{{ u.nombre }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>🎉 Todos cargaron su pronóstico</p>
+{% endif %}
+
+<br>
+<a href="/calendario">← Volver al calendario</a>

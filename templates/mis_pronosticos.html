@@ -1,0 +1,33 @@
+{% for p in pronosticos %}
+<div class="card mb-4">
+  <h4>{{ p.pais }} - {{ p.fecha | datetimeformat }}</h4>
+
+  <h5>Resultado oficial</h5>
+  {% if p.res_pole %}
+    <ul>
+      <li>Pole: {{ p.res_pole }}</li>
+      {% if p.res_sprint %}
+        <li>Sprint: {{ p.res_sprint }}</li>
+      {% endif %}
+      <li>1º: {{ p.res_p1 }}</li>
+      <li>2º: {{ p.res_p2 }}</li>
+      <li>3º: {{ p.res_p3 }}</li>
+    </ul>
+  {% else %}
+    <p><em>Resultado aún no cargado</em></p>
+  {% endif %}
+
+  <h5>Tu pronóstico</h5>
+  <ul>
+    <li>Pole: {{ p.pro_pole }}</li>
+    {% if p.pro_sprint %}
+      <li>Sprint: {{ p.pro_sprint }}</li>
+    {% endif %}
+    <li>1º: {{ p.pro_p1 }}</li>
+    <li>2º: {{ p.pro_p2 }}</li>
+    <li>3º: {{ p.pro_p3 }}</li>
+  </ul>
+
+  <strong>Puntos obtenidos: {{ p.puntos }}</strong>
+</div>
+{% endfor %}

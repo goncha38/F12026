@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Calendario{% endblock %}
+
+{% block content %}
+<h2>Calendario</h2>
+{% endblock %}
+
+<table border="1" cellpadding="5">
+  <tr>
+    <th>#</th>
+    <th>País</th>
+    <th>Autódromo</th>
+    <th>Fecha</th>
+    <th>Sprint</th>
+    <th>Pronóstico</th>
+  </tr>
+
+  {% for c in carreras %}
+  <tr>
+    <td>{{ c.nro_carrera }}</td>
+    <td>{{ c.pais }}</td>
+    <td>{{ c.autodromo }}</td>
+    <td>{{ c.fecha | datetimeformat }}</td>
+    <td>{{ "Sí" if c.sprint else "No" }}</td>
+    <td>
+      <a href="/fecha/{{ c.nro_carrera }}">Ver fecha</a>
+
+        Cargar pronóstico
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

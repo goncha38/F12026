@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Administración de Usuarios</h2>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Avatar</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Admin</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for u in usuarios %}
+    <tr>
+        <form method="POST">
+            <td>
+                <img src="{{ url_for('static', filename='avatars/' ~ (u.avatar or 'avatar1.png')) }}"
+                     width="40" style="border-radius:50%"><br>
+
+                <select name="avatar">
+                    {% for i in range(1,11) %}
+                        <option value="avatar{{i}}.png"
+                            {% if u.avatar == 'avatar' ~ i ~ '.png' %}selected{% endif %}>
+                            avatar{{i}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td>
+
+            <td>
+                <input type="text" name="nombre" value="{{ u.nombre }}">
+            </td>
+
+            <td>{{ u.email }}</td>
+
+            <td>{% if u.admin %}✔{% endif %}</td>
+
+            <td>
+                <input type="hidden" name="user_id" value="{{ u.id }}">
+                <button type="submit">Guardar</button>
+
+                <a href="/admin/usuarios/reset_password/{{ u.id }}"
+                   onclick="return confirm('¿Blanquear contraseña?')">
+                   Reset Pass
+                </a>
+
+                <a href="/admin/usuarios/eliminar/{{ u.id }}"
+                   onclick="return confirm('¿Eliminar usuario?')">
+                   🗑
+                </a>
+            </td>
+        </form>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

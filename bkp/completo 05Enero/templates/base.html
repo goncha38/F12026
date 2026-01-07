@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}F1 Prode{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header style="padding:10px; background:#eee;">
+    {% if session.get("user_name") %}
+        <strong>{{ session.user_name }}</strong>
+        {% if session.admin %}(admin){% endif %}
+        | <a href="/logout">Cerrar sesión</a>
+    {% endif %}
+    {% if session.avatar %}
+    <img src="{{ url_for('static', filename='avatars/' ~ session.avatar) }}"
+         width="40" height="40" style="border-radius:50%">
+{% endif %}
+
+<a href="/logout">Salir</a>
+
+</header>
+
+<hr>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

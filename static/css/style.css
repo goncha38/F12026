@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e4dddd;
+}
+
+.navbar {
+    background-color: #e7c9c9;
+    color: white;
+    padding: 10px;
+}
+
+.ganador {
+    background-color: gold;
+    font-weight: bold;
+}

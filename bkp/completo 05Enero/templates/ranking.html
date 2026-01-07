@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ranking General</title>
+</head>
+<body>
+
+<h2>🏆 Ranking General</h2>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Posición</th>
+        <th>Usuario</th>
+        <th>Puntos</th>
+    </tr>
+
+    {% for r in ranking %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ r["nombre"] }}</td>
+        <td>{{ r["total_puntos"] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="/dashboard">⬅ Volver</a>
+
+</body>
+</html>

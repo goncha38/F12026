@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Pilotos</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #777;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #ddd;
+        }
+        form {
+            margin: 0;
+        }
+        input[type="text"], input[type="number"] {
+            width: 95%;
+            padding: 4px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Pilotos de Fórmula 1</h2>
+
+<table>
+    <tr>
+        <th>Dorsal</th>
+        <th>Nombre</th>
+        <th>Equipo</th>
+        <th>Nacionalidad</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for p in pilotos %}
+    <tr>
+        <form action="/pilotos" method="post">
+    <input type="hidden" name="id" value="{{ p['id'] }}">
+    <td><input type="text" name="dorsal" value="{{ p['dorsal'] }}"></td>
+    <td><input type="text" name="nombre" value="{{ p['nombre'] }}"></td>
+    <td><input type="text" name="equipo" value="{{ p['equipo'] }}"></td>
+    <td><input type="text" name="nacionalidad" value="{{ p['nacionalidad'] }}"></td>
+    <td><button type="submit">Guardar</button></td>
+</form>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
