@@ -1,30 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ranking General</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Ranking{% endblock %}
 
-<h2>🏆 Ranking General</h2>
+{% block content %}
+<h2 class="mb-4">🏆 Ranking General</h2>
 
-<table border="1" cellpadding="5">
-    <tr>
-        <th>Posición</th>
-        <th>Usuario</th>
-        <th>Puntos</th>
-    </tr>
-
-    {% for r in ranking %}
-    <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ r["nombre"] }}</td>
-        <td>{{ r["total_puntos"] }}</td>
-    </tr>
-    {% endfor %}
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Jugador</th>
+            <th>Pronósticos</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in ranking %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.pronosticos }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-
-<br>
-<a href="/dashboard">⬅ Volver</a>
-
-</body>
-</html>
+{% endblock %}

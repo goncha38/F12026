@@ -54,3 +54,12 @@ a {
 body.dark-mode a {
     color: #66b2ff;
 }
+.avatar-select {
+    border: 2px solid transparent;
+    transition: transform 0.2s, border 0.2s;
+}
+
+input[type="radio"]:checked + .avatar-select {
+    border: 3px solid #0d6efd;
+    transform: scale(1.1);
+}

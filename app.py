@@ -47,7 +47,10 @@ def get_db():
 
 @app.route("/")
 def index():
+    if "user_id" in session:
+        return redirect("/dashboard")
     return render_template("index.html")
+
 
 
 # -------- REGISTRO --------
@@ -97,7 +100,8 @@ def register():
         conn.close()
 
         print("FORM DATA:", request.form)
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     return render_template("register.html")
 # -------- LOGIN --------
@@ -137,12 +141,14 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/login")
+    return render_template("index.html")
+
 # -------- DASHBOARD --------
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -202,7 +208,8 @@ def dashboard():
 @app.route("/perfil", methods=["GET", "POST"])
 def perfil():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html")
+
 
     if request.method == "POST":
         avatar = request.form.get("avatar")
@@ -228,7 +235,8 @@ def perfil():
 @app.route("/calendario")
 def calendario():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -249,7 +257,8 @@ def calendario():
 def pronostico_carrera(carrera_id):
 
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -297,13 +306,13 @@ def pronostico_carrera(carrera_id):
         else:
             cur.execute("""
                 INSERT INTO pronosticos
-                (user_id, carrera, pole, sprint_ganador, p1, p2, p3)
+                (user_id, carrera_id, pole, sprint_ganador, p1, p2, p3)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (session["user_id"], carrera_id, pole, sprint_ganador, p1, p2, p3))
 
         conn.commit()
         conn.close()
-        return redirect("/calendario")
+        return redirect("/dashboard")
 
     # -------- GET --------
     cur.execute("SELECT * FROM pilotos ORDER BY nombre")
@@ -319,10 +328,11 @@ def pronostico_carrera(carrera_id):
     )
 
 # -------- LISTA Y EDICIÓN DE PILOTOS --------
-@app.route("/pilotos", methods=["GET"])
+@app.route("/pilotos", methods=["GET", "POST"])
 def listar_pilotos():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -336,7 +346,8 @@ def listar_pilotos():
 @app.route("/pilotos/editar/<int:piloto_id>", methods=["POST"])
 def editar_piloto(piloto_id):
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     nombre = request.form["nombre"]
     equipo = request.form["equipo"]
@@ -464,7 +475,9 @@ def reset_password_usuario(user_id):
 @app.route("/admin/carreras", methods=["GET", "POST"])
 def admin_carreras():
     if "user_id" not in session:
-        return redirect("/login")
+        #return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -522,7 +535,8 @@ def admin_carreras():
 @app.route("/admin/resultados/<int:carrera_id>", methods=["GET", "POST"])
 def admin_resultados(carrera_id):
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     if not session.get("admin"):
         return "Acceso denegado", 403
@@ -653,7 +667,8 @@ def calcular_puntos(pron, res):
 @app.route("/mis_pronosticos")
 def mis_pronosticos():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -701,7 +716,8 @@ def mis_pronosticos():
 @app.route("/admin/calcular_puntos/<int:carrera_id>")
 def admin_calcular_puntos(carrera_id):
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     if not session.get("admin"):
         return "Acceso denegado", 403
@@ -747,7 +763,8 @@ def admin_calcular_puntos(carrera_id):
 @app.route("/ranking")
 def ranking():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()
@@ -771,7 +788,8 @@ def ranking():
 @app.route("/control_pronosticos")
 def control_pronosticos():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     # solo admin
     if not session.get("admin"):
@@ -830,7 +848,8 @@ def obtener_carrera_actual(cur):
 @app.route("/pronosticos_fecha")
 def pronosticos_fecha():
     if "user_id" not in session:
-        return redirect("/login")
+        return render_template("index.html", error="Login incorrecto")
+
 
     conn = get_db()
     cur = conn.cursor()

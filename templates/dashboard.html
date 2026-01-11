@@ -1,57 +1,75 @@
-<h2>Próxima carrera</h2>
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
 
 {% if carrera %}
-<div style="border:2px solid #28a745;padding:20px;margin-bottom:30px;">
-    <h2>🏁 RACE WEEK !!!</h2>
+<h2 class="mb-3">🏁 Race Week!</h2>
 
-    <h3>{{ carrera.pais }} – {{ carrera.autodromo }}</h3>
+<div class="card race-card mb-4 shadow-sm">
+    <div class="card-body">
 
-    <!-- Imagen del circuito -->
-    {% if carrera.imagen %}
-        <img src="{{ url_for('static', filename='circuitos/' ~ carrera.imagen) }}"
-             style="max-width:100%;height:auto;margin:15px 0;">
-    {% endif %}
+        <h4 class="card-title text-center">
+            {{ carrera.autodromo }} – {{ carrera.pais }}
+        </h4>
 
-    {% if horas_restantes is not none %}
-        <p>⏳ Quedan <strong>{{ horas_restantes }} horas</strong> para cerrar el pronóstico</p>
-    {% else %}
-        <p><em>Fecha límite aún no definida</em></p>
-    {% endif %}
+        {% if carrera.imagen %}
+        <img src="{{ url_for('static', filename='circuitos/' + carrera.imagen) }}"
+             class="img-fluid rounded my-3">
+        {% endif %}
 
-    {% if ya_pronosticado %}
-        <p style="color:#155724;">
-            ✅ Ya cargaste tu pronóstico.<br>
-            <a href="/pronostico/{{ carrera.id }}">Modificar pronóstico</a>
-        </p>
-    {% else %}
-        <a href="/pronostico/{{ carrera.id }}"
-           style="padding:10px 15px;background:#007bff;color:white;text-decoration:none;">
-            👉 Cargar pronóstico
-        </a>
-    {% endif %}
+        {% if horas_restantes is not none %}
+            <div class="alert alert-warning text-center">
+                ⏳ Quedan <strong>{{ horas_restantes }} horas</strong> para cerrar el pronóstico
+            </div>
+        {% else %}
+            <div class="alert alert-secondary text-center">
+                Fecha límite aún no definida
+            </div>
+        {% endif %}
+
+        <div class="d-grid gap-2">
+            <a href="/pronostico/{{ carrera.id }}" class="btn btn-primary btn-lg">
+                {% if ya_pronosticado %}
+                    ✏️ Ver / Editar pronóstico
+                {% else %}
+                    📝 Cargar pronóstico
+                {% endif %}
+            </a>
+        </div>
+
+    </div>
 </div>
+
 {% else %}
-<div style="padding:15px;background:#f8f9fa;">
-    <h3>⏸ No hay Race Week activa</h3>
+<div class="alert alert-secondary text-center">
+    ⏸ No hay Race Week activa
 </div>
 {% endif %}
+<div class="d-grid gap-2 mt-3">
+    <a href="/ranking" class="btn btn-outline-dark">
+        🏆 Ver Ranking General
+    </a>
+</div>
 
 
-<h3>Próximas carreras</h3>
+<h4 class="mt-4">Próximas carreras</h4>
 
-<table border="1" cellpadding="6" width="100%">
-    <tr>
-        <th>Carrera</th>
-        <th>Fecha</th>
-        <th>Estado</th>
-    </tr>
-
-    {% for c in proximas %}
-    <tr style="background:#f2f2f2;">
-        <td>{{ c.pais }}</td>
-        <td>{{ c.fecha }}</td>
-        <td>🔒 Pronóstico cerrado</td>
-    </tr>
-    {% endfor %}
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Carrera</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in proximas %}
+        <tr>
+            <td>{{ c.pais }}</td>
+            <td>{{ c.fecha }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
+{% endblock %}
