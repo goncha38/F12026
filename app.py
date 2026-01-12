@@ -133,7 +133,7 @@ def login():
 
             return redirect("/dashboard")
 
-        return render_template("login.html", error="Login incorrecto")
+        return render_template("loguin.html", error="Login incorrecto")
 
     return render_template("login.html")
 
@@ -198,10 +198,12 @@ def dashboard():
     return render_template(
         "dashboard.html",
         carrera=carrera_activa,
+        carrera_activa_id=carrera_activa["id"] if carrera_activa else None,
         horas_restantes=horas_restantes,
         ya_pronosticado=ya_pronosticado,
         proximas=proximas
     )
+
 
 
 #---------EDITAR PERFIL-------------

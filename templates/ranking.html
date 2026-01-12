@@ -2,24 +2,16 @@
 {% block title %}Ranking{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">🏆 Ranking General</h2>
+<h2>🏆 Ranking General</h2>
 
-<table class="table table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>#</th>
-            <th>Jugador</th>
-            <th>Pronósticos</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for u in ranking %}
-        <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ u.nombre }}</td>
-            <td>{{ u.pronosticos }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="ranking-lista">
+    {% for u in ranking %}
+    <div class="ranking-card">
+        <span class="posicion">#{{ loop.index }}</span>
+        <span class="nombre">{{ u.nombre }}</span>
+        <span class="puntos">{{ u.total_puntos }} pts</span>
+    </div>
+    {% endfor %}
+</div>
+
 {% endblock %}
