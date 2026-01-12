@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+{% if carrera %}
+<h2 class="mb-3">🏁 Race Week!</h2>
+
+<div class="card race-card mb-4 shadow-sm">
+    <div class="card-body">
+
+        <h4 class="card-title text-center">
+            {{ carrera.autodromo }} – {{ carrera.pais }}
+        </h4>
+
+        {% if carrera.imagen %}
+        <img src="{{ url_for('static', filename='circuitos/' + carrera.imagen) }}"
+             class="img-fluid rounded my-3">
+        {% endif %}
+
+        {% if horas_restantes is not none %}
+            <div class="alert alert-warning text-center">
+                ⏳ Quedan <strong>{{ horas_restantes }} horas</strong> para cerrar el pronóstico
+            </div>
+        {% else %}
+            <div class="alert alert-secondary text-center">
+                Fecha límite aún no definida
+            </div>
+        {% endif %}
+
+        <div class="d-grid gap-2">
+            <a href="/pronostico/{{ carrera.id }}" class="btn btn-primary btn-lg">
+                {% if ya_pronosticado %}
+                    ✏️ Ver / Editar pronóstico
+                {% else %}
+                    📝 Cargar pronóstico
+                {% endif %}
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% else %}
+<div class="alert alert-secondary text-center">
+    ⏸ No hay Race Week activa
+</div>
+{% endif %}
+<div class="d-grid gap-2 mt-3">
+    <a href="/ranking" class="btn btn-outline-dark">
+        🏆 Ver Ranking General
+    </a>
+</div>
+
+
+<h4 class="mt-4">Próximas carreras</h4>
+
+<div class="carreras-lista">
+    {% for c in proximas %}
+    <div class="carrera-card">
+        <div class="carrera-titulo">
+            🏁 {{ c.pais }}
+        </div>
+
+        <div class="carrera-fecha">
+            📅 {{ c.fecha }}
+        </div>
+
+        <div class="carrera-estado">
+            🔒 Pronóstico cerrado
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

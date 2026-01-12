@@ -1,0 +1,31 @@
+<h2>Resultados – {{ carrera.pais }}</h2>
+
+<form method="POST">
+
+Pole:
+<select name="pole">
+{% for p in pilotos %}
+<option value="{{ p }}" {% if resultado and resultado.pole==p %}selected{% endif %}>{{ p }}</option>
+{% endfor %}
+</select><br><br>
+
+{% if carrera.sprint == 1 %}
+Sprint:
+<select name="sprint">
+<option value="">--</option>
+{% for p in pilotos %}
+<option value="{{ p }}" {% if resultado and resultado.sprint_ganador==p %}selected{% endif %}>{{ p }}</option>
+{% endfor %}
+</select><br><br>
+{% endif %}
+
+Podio:<br>
+1°
+<select name="p1">{% for p in pilotos %}<option value="{{ p }}" {% if resultado and resultado.p1==p %}selected{% endif %}>{{ p }}</option>{% endfor %}</select><br>
+2°
+<select name="p2">{% for p in pilotos %}<option value="{{ p }}" {% if resultado and resultado.p2==p %}selected{% endif %}>{{ p }}</option>{% endfor %}</select><br>
+3°
+<select name="p3">{% for p in pilotos %}<option value="{{ p }}" {% if resultado and resultado.p3==p %}selected{% endif %}>{{ p }}</option>{% endfor %}</select><br><br>
+
+<button type="submit">Guardar resultados</button>
+</form>
