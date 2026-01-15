@@ -5,15 +5,17 @@
         <th>Carrera</th>
         <th>Fecha</th>
         <th>Fecha límite pronóstico</th>
-        <th>Imagen circuito</th>
+        <th>Status</th>
+        <th>Imagen</th>
         <th>Pronóstico</th>
-        <th>Guardar</th>
+        <th>Acciones</th>
     </tr>
 
     {% for c in carreras %}
     <tr>
         <form method="POST">
             <td>{{ c.pais }}</td>
+
             <td>{{ c.fecha }}</td>
 
             <td>
@@ -23,10 +25,18 @@
             </td>
 
             <td>
+                <select name="status">
+                    <option value="futura" {% if c.status == 'futura' %}selected{% endif %}>Futura</option>
+                    <option value="iniciada" {% if c.status == 'iniciada' %}selected{% endif %}>Iniciada</option>
+                    <option value="corrida" {% if c.status == 'corrida' %}selected{% endif %}>Corrida</option>
+                </select>
+            </td>
+
+            <td>
                 <input type="text"
                        name="imagen"
-                       placeholder="australia.png"
-                       value="{{ c.imagen or '' }}">
+                       value="{{ c.imagen or '' }}"
+                       placeholder="australia.png">
             </td>
 
             <td>
@@ -39,7 +49,20 @@
 
             <td>
                 <input type="hidden" name="carrera_id" value="{{ c.id }}">
-                <button type="submit">Guardar</button>
+
+                <button type="submit" name="accion" value="guardar">
+                    💾 Guardar
+                </button>
+
+                {% if c.pronostico_abierto %}
+                    <button type="submit" name="accion" value="cerrar">
+                        🔒 Cerrar
+                    </button>
+                {% else %}
+                    <button type="submit" name="accion" value="abrir">
+                        🔓 Abrir
+                    </button>
+                {% endif %}
             </td>
         </form>
     </tr>

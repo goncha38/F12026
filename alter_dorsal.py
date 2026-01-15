@@ -4,12 +4,12 @@ conn = sqlite3.connect("prode.db")
 cur = conn.cursor()
 
 cur.execute("""
-    ALTER TABLE pronosticos
-    ADD COLUMN carrera_id INTEGER
+    ALTER TABLE carreras
+    ADD COLUMN status TEXT DEFAULT 'futura'
 """)
 
 conn.commit()
 conn.close()
 
-print("Columna carrera_id agregada correctamente")
+print("Columna status agregada correctamente")
 

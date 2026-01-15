@@ -149,15 +149,14 @@ def dashboard():
     if "user_id" not in session:
         return render_template("index.html", error="Login incorrecto")
 
-
     conn = get_db()
     cur = conn.cursor()
 
-    # 1️⃣ Carrera con pronóstico abierto (Race Week)
+    # 1️⃣ CARRERA ACTIVA (Race Week)
     cur.execute("""
         SELECT *
         FROM carreras
-        WHERE pronostico_abierto = 1
+        WHERE status = 'iniciada'
         ORDER BY fecha ASC
         LIMIT 1
     """)
@@ -174,20 +173,40 @@ def dashboard():
         delta = fecha_limite - datetime.now()
         horas_restantes = max(0, int(delta.total_seconds() // 3600))
 
-        # ¿El usuario ya pronosticó esta carrera?
         cur.execute("""
-            SELECT id
+            SELECT 1
             FROM pronosticos
             WHERE user_id = ? AND carrera_id = ?
         """, (session["user_id"], carrera_activa["id"]))
         ya_pronosticado = cur.fetchone() is not None
 
-    # 2️⃣ Próximas 4 carreras (cerradas)
+    # 2️⃣ ÚLTIMA CARRERA CORRIDA
     cur.execute("""
         SELECT *
         FROM carreras
-        WHERE pronostico_abierto = 0
-          AND fecha >= date('now')
+        WHERE status = 'corrida'
+        ORDER BY fecha DESC
+        LIMIT 1
+    """)
+    carrera_anterior = cur.fetchone()
+
+    pronosticos_fecha = []
+    if carrera_anterior:
+        cur.execute("""
+            SELECT u.nombre AS usuario,
+                   p.puntos
+            FROM pronosticos p
+            JOIN usuarios u ON u.id = p.user_id
+            WHERE p.carrera_id = ?
+            ORDER BY p.puntos DESC
+        """, (carrera_anterior["id"],))
+        pronosticos_fecha = cur.fetchall()
+
+    # 3️⃣ PRÓXIMAS CARRERAS
+    cur.execute("""
+        SELECT *
+        FROM carreras
+        WHERE status = 'futura'
         ORDER BY fecha ASC
         LIMIT 4
     """)
@@ -198,13 +217,12 @@ def dashboard():
     return render_template(
         "dashboard.html",
         carrera=carrera_activa,
-        carrera_activa_id=carrera_activa["id"] if carrera_activa else None,
+        carrera_anterior=carrera_anterior,
+        pronosticos_fecha=pronosticos_fecha,
         horas_restantes=horas_restantes,
         ya_pronosticado=ya_pronosticado,
         proximas=proximas
     )
-
-
 
 #---------EDITAR PERFIL-------------
 @app.route("/perfil", methods=["GET", "POST"])
@@ -473,51 +491,83 @@ def reset_password_usuario(user_id):
 
 # ==============================
 # ADMIN – CARRERAS
-#@app.route("/admin_carreras", methods=["GET", "POST"])
 @app.route("/admin/carreras", methods=["GET", "POST"])
 def admin_carreras():
     if "user_id" not in session:
-        #return redirect("/login")
         return render_template("index.html", error="Login incorrecto")
-
 
     conn = get_db()
     cur = conn.cursor()
 
-    # verificar admin
+    # 🔐 verificar admin
     cur.execute("SELECT admin FROM usuarios WHERE id = ?", (session["user_id"],))
     user = cur.fetchone()
-
     if not user or user["admin"] != 1:
         conn.close()
         return "Acceso denegado", 403
 
-    # POST → guardar cambios
+    # ======================
+    # POST – acciones
+    # ======================
     if request.method == "POST":
         carrera_id = request.form["carrera_id"]
+        accion = request.form.get("accion")
+
+        # valores opcionales
         fecha_limite = request.form.get("fecha_limite_pronostico")
+        status = request.form.get("status")
         imagen = request.form.get("imagen")
 
-        if imagen:
+        # traer estado anterior
+        cur.execute(
+            "SELECT status FROM carreras WHERE id = ?",
+            (carrera_id,)
+        )
+        estado_anterior = cur.fetchone()["status"]
+
+        # 👉 GUARDAR (fecha, status, imagen)
+        if accion == "guardar":
             cur.execute("""
                 UPDATE carreras
                 SET fecha_limite_pronostico = ?,
+                    status = ?,
                     imagen = ?
                 WHERE id = ?
-            """, (fecha_limite, imagen, carrera_id))
-        else:
+            """, (fecha_limite, status, imagen, carrera_id))
+
+            # ⭐ CLAVE: si pasa a CORRIDA → calcular puntos
+        conn.commit()   # ⬅️ liberar el lock
+
+        if estado_anterior != "corrida" and status == "corrida":
+            calcular_puntos_carrera(carrera_id)
+
+
+
+        # 👉 ABRIR PRONÓSTICO
+        elif accion == "abrir":
             cur.execute("""
                 UPDATE carreras
-                SET fecha_limite_pronostico = ?
+                SET pronostico_abierto = 1
                 WHERE id = ?
-            """, (fecha_limite, carrera_id))
+            """, (carrera_id,))
+
+        # 👉 CERRAR PRONÓSTICO
+        elif accion == "cerrar":
+            cur.execute("""
+                UPDATE carreras
+                SET pronostico_abierto = 0
+                WHERE id = ?
+            """, (carrera_id,))
 
         conn.commit()
 
-    # GET → mostrar carreras
+    # ======================
+    # GET – mostrar carreras
+    # ======================
     cur.execute("""
-        SELECT id, pais, autodromo, fecha,
+        SELECT id, pais, fecha,
                fecha_limite_pronostico,
+               status,
                imagen,
                pronostico_abierto
         FROM carreras
@@ -527,7 +577,6 @@ def admin_carreras():
 
     conn.close()
     return render_template("admin_carreras.html", carreras=carreras)
-
 
 
 
@@ -597,7 +646,7 @@ def admin_resultados(carrera_id):
 from datetime import datetime
 
 @app.route("/fecha/<int:carrera_id>")
-def fecha(carrera_id):
+def fecha_detalle(carrera_id):
     conn = get_db()
     cur = conn.cursor()
 
@@ -605,13 +654,18 @@ def fecha(carrera_id):
     cur.execute("SELECT * FROM carreras WHERE id = ?", (carrera_id,))
     carrera = cur.fetchone()
 
-    # Resultado
+    # Resultado oficial
     cur.execute("SELECT * FROM resultados WHERE carrera_id = ?", (carrera_id,))
     resultado = cur.fetchone()
 
-    # Pronósticos
+    # Pronósticos de TODOS
     cur.execute("""
-        SELECT p.*, u.nombre AS usuario
+        SELECT
+            u.nombre AS usuario,
+            p.pole,
+            p.sprint_ganador,
+            p.p1, p.p2, p.p3,
+            p.puntos
         FROM pronosticos p
         JOIN usuarios u ON u.id = p.user_id
         WHERE p.carrera_id = ?
@@ -621,49 +675,81 @@ def fecha(carrera_id):
 
     conn.close()
 
-    # ⏱️ CUENTA REGRESIVA
-    segundos_restantes = 0
-    if carrera["fecha_clasificacion"]:
-        cierre = datetime.strptime(
-            carrera["fecha_clasificacion"], "%Y-%m-%d %H:%M"
-        )
-        ahora = datetime.now()
-        diff = (cierre - ahora).total_seconds()
-        if diff > 0:
-            segundos_restantes = int(diff)
-
     return render_template(
-        "fecha.html",
+        "pronosticos_fecha.html",
         carrera=carrera,
         resultado=resultado,
-        pronosticos=pronosticos,
-        segundos_restantes=segundos_restantes
+        pronosticos=pronosticos
     )
 
-#---------CALCULAR PUNTOS -----------
-def calcular_puntos(pron, res):
-    puntos = 0
 
-    # Pole
-    if pron["pole"] == res["pole"]:
-        puntos += 2
 
-    # Sprint (si existe)
-    if res["sprint_ganador"]:
-        if pron["sprint_ganador"] == res["sprint_ganador"]:
+#----------CALCULAR PUNTOS NUEVA---------
+def calcular_puntos_carrera(carrera_id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Resultado oficial
+    cur.execute("""
+        SELECT pole, sprint_ganador, p1, p2, p3
+        FROM resultados
+        WHERE carrera_id = ?
+    """, (carrera_id,))
+    resultado = cur.fetchone()
+
+    if not resultado:
+        conn.close()
+        return
+
+    podio_real = [resultado["p1"], resultado["p2"], resultado["p3"]]
+
+    # Pronósticos
+    cur.execute("""
+        SELECT id, pole, sprint_ganador, p1, p2, p3
+        FROM pronosticos
+        WHERE carrera_id = ?
+    """, (carrera_id,))
+    pronosticos = cur.fetchall()
+
+    for p in pronosticos:
+        puntos = 0
+
+        # POLE → 2 puntos
+        if p["pole"] == resultado["pole"]:
             puntos += 2
 
-    # Podio
-    podio_res = [res["p1"], res["p2"], res["p3"]]
-    podio_pron = [pron["p1"], pron["p2"], pron["p3"]]
+        # SPRINT → 2 puntos (si existe)
+        if resultado["sprint_ganador"]:
+            if p["sprint_ganador"] == resultado["sprint_ganador"]:
+                puntos += 2
 
-    for i in range(3):
-        if podio_pron[i] == podio_res[i]:
+        # P1
+        if p["p1"] == resultado["p1"]:
             puntos += 3
-        elif podio_pron[i] in podio_res:
+        elif p["p1"] in podio_real:
             puntos += 1
 
-    return puntos
+        # P2
+        if p["p2"] == resultado["p2"]:
+            puntos += 3
+        elif p["p2"] in podio_real:
+            puntos += 1
+
+        # P3
+        if p["p3"] == resultado["p3"]:
+            puntos += 3
+        elif p["p3"] in podio_real:
+            puntos += 1
+
+        # Guardar total
+        cur.execute("""
+            UPDATE pronosticos
+            SET puntos = ?
+            WHERE id = ?
+        """, (puntos, p["id"]))
+
+    conn.commit()
+    conn.close()
 
 #----------VER PRONOSTICOS ----------
 @app.route("/mis_pronosticos")

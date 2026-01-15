@@ -1,0 +1,56 @@
+/* =========================
+   VARIABLES DE COLOR
+========================= */
+:root {
+    --bg: #f8f9fa;
+    --text: #212529;
+    --card: #ffffff;
+    --border: #dee2e6;
+}
+
+body.dark-mode {
+    --bg: #121212;
+    --text: #e6e6e6;
+    --card: #1e1e1e;
+    --border: #333;
+}
+
+/* =========================
+   FORZAR SOBRE BOOTSTRAP
+========================= */
+html, body {
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+}
+
+/* Cards */
+.card {
+    background-color: var(--card) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Tablas */
+.table,
+.table th,
+.table td {
+    color: var(--text) !important;
+    background-color: var(--card) !important;
+    border-color: var(--border) !important;
+}
+
+/* Alerts */
+.alert {
+    background-color: var(--card) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+}
+
+/* Links */
+a {
+    color: #0d6efd;
+}
+
+body.dark-mode a {
+    color: #66b2ff;
+}

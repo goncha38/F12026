@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Prode F1 2026{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+
+    <!-- LOGO -->
+    <img src="{{ url_for('static', filename='img/logo.png') }}"
+         alt="Prode F1 2026"
+         style="max-width:220px"
+         class="mb-4">
+
+    <h1 class="mb-3">Prode Fórmula 1 – Temporada 2026</h1>
+    <p class="lead">Largamos el 6 de marzo 🏁</p>
+
+    <div class="row justify-content-center mt-4">
+        <!-- LOGIN -->
+        <div class="col-md-4">
+            <div class="card p-4 mb-3">
+                <h4 class="mb-3">Ingresar</h4>
+
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="/login">
+                    <input type="email" name="email" class="form-control mb-2"
+                           placeholder="Email" required>
+
+                    <input type="password" name="password" class="form-control mb-3"
+                           placeholder="Contraseña" required>
+
+                    <button class="btn btn-primary w-100">Entrar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- REGISTRO -->
+        <div class="col-md-4">
+            <div class="card p-4 mb-3">
+                <h4 class="mb-3">Crear cuenta</h4>
+
+                <a href="/register" class="btn btn-outline-success w-100">
+                    Registrarse
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Ranking{% endblock %}
+
+{% block content %}
+<h2>🏆 Ranking General</h2>
+
+<div class="ranking-lista">
+    {% for u in ranking %}
+    <div class="ranking-card">
+        <span class="posicion">#{{ loop.index }}</span>
+        <span class="nombre">{{ u.nombre }}</span>
+        <span class="puntos">{{ u.total_puntos }} pts</span>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>🏎️ F1 Prode</h2>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Ingresar
+            </button>
+        </form>
+
+        <p class="auth-footer">
+            ¿No tenés cuenta?
+            <a href="/register">Registrate</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Pronóstico{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h2 class="mb-3">🏁 Pronóstico – {{ carrera.pais }}</h2>
+
+    {% if not carrera.pronostico_abierto %}
+        <div class="alert alert-danger">
+            ⚠️ El pronóstico para esta carrera está cerrado
+        </div>
+    {% endif %}
+
+    {% if carrera.fecha_limite_pronostico %}
+        <div id="contador" class="alert alert-warning fw-bold"></div>
+
+        <script>
+            const cierre = new Date("{{ carrera.fecha_limite_pronostico }}".replace(" ", "T")).getTime();
+            const contador = document.getElementById("contador");
+
+            function actualizarContador() {
+                const ahora = new Date().getTime();
+                const diff = cierre - ahora;
+
+                if (diff <= 0) {
+                    contador.innerHTML = "⛔ Pronóstico cerrado";
+                    contador.className = "alert alert-danger fw-bold";
+                    return;
+                }
+
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const m = Math.floor((diff / (1000 * 60)) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+
+                contador.innerHTML = `⏳ Cierra en: ${d}d ${h}h ${m}m ${s}s`;
+            }
+
+            actualizarContador();
+            setInterval(actualizarContador, 1000);
+        </script>
+    {% endif %}
+
+    <form method="post" class="card p-4 shadow-sm">
+
+        <!-- POLE -->
+        <div class="mb-3">
+            <label class="form-label">🏎️ Pole position</label>
+            <select class="form-select"
+                    name="pole"
+                    {% if not carrera.pronostico_abierto %}disabled{% endif %}>
+                <option value="">-- Seleccionar --</option>
+                {% for p in pilotos %}
+                    <option value="{{ p }}"
+                        {% if pronostico and pronostico.pole == p %}selected{% endif %}>
+                        {{ p }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- SPRINT -->
+        {% if carrera.sprint %}
+        <div class="mb-3">
+            <label class="form-label">⚡ Ganador Sprint</label>
+            <select class="form-select"
+                    name="sprint_ganador"
+                    {% if not carrera.pronostico_abierto %}disabled{% endif %}>
+                <option value="">-- Seleccionar --</option>
+                {% for p in pilotos %}
+                    <option value="{{ p }}"
+                        {% if pronostico and pronostico.sprint_ganador == p %}selected{% endif %}>
+                        {{ p }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <!-- PODIO -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">🥇 1° puesto</label>
+                <select class="form-select"
+                        name="p1"
+                        {% if not carrera.pronostico_abierto %}disabled{% endif %}>
+                    <option value="">-- Seleccionar --</option>
+                    {% for p in pilotos %}
+                        <option value="{{ p }}"
+                            {% if pronostico and pronostico.p1 == p %}selected{% endif %}>
+                            {{ p }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">🥈 2° puesto</label>
+                <select class="form-select"
+                        name="p2"
+                        {% if not carrera.pronostico_abierto %}disabled{% endif %}>
+                    <option value="">-- Seleccionar --</option>
+                    {% for p in pilotos %}
+                        <option value="{{ p }}"
+                            {% if pronostico and pronostico.p2 == p %}selected{% endif %}>
+                            {{ p }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">🥉 3° puesto</label>
+                <select class="form-select"
+                        name="p3"
+                        {% if not carrera.pronostico_abierto %}disabled{% endif %}>
+                    <option value="">-- Seleccionar --</option>
+                    {% for p in pilotos %}
+                        <option value="{{ p }}"
+                            {% if pronostico and pronostico.p3 == p %}selected{% endif %}>
+                            {{ p }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        {% if carrera.pronostico_abierto %}
+            <button type="submit" class="btn btn-success w-100 mt-2">
+                💾 Guardar pronóstico
+            </button>
+        {% endif %}
+
+    </form>
+
+    <div class="mt-3">
+        <a href="/calendario">⬅ Volver al calendario</a>
+    </div>
+
+</div>
+
+{% endblock %}

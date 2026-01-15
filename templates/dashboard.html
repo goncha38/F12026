@@ -2,6 +2,50 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+{% if carrera_anterior %}
+<div class="card mt-4">
+    <div class="card-body">
+        <h4>
+            🏁 Última carrera:
+            {{ carrera_anterior.pais }} ({{ carrera_anterior.fecha }})
+        </h4>
+
+        <table class="table table-sm table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Usuario</th>
+                    <th>Puntos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pronosticos_fecha %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ p.usuario }}</td>
+                    <td><strong>{{ p.puntos }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-end">
+{% if carrera_anterior %}
+    <h4>Última carrera: {{ carrera_anterior.pais }}</h4>
+
+    <a href="/fecha/{{ carrera_anterior.id }}"
+       class="btn btn-outline-primary btn-sm">
+        Ver detalle completo
+    </a>
+{% endif %}
+
+
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 
 {% if carrera %}
 <h2 class="mb-3">🏁 Race Week!</h2>
@@ -51,6 +95,14 @@
         🏆 Ver Ranking General
     </a>
 </div>
+{% if carrera_anterior %}
+<h3>Última carrera: {{ carrera_anterior.pais }}</h3>
+<a href="/fecha/{{ carrera_anterior.id }}" class="btn btn-sm btn-outline-primary">
+    Ver detalle completo
+</a>
+{% else %}
+<p>No hay carreras finalizadas aún</p>
+{% endif %}
 
 
 <h4 class="mt-4">Próximas carreras</h4>

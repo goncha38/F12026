@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width:600px">
+
+    <h2 class="mb-4 text-center">Crear cuenta</h2>
+
+    {% if error %}
+        <div class="alert alert-danger text-center">
+            {{ error }}
+        </div>
+    {% endif %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+    <form method="POST">
+
+        <input type="text" name="nombre" class="form-control mb-2"
+               placeholder="Nombre de usuario" required>
+
+        <input type="email" name="email" class="form-control mb-2"
+               placeholder="Email" required>
+
+        <input type="password" name="password" class="form-control mb-2"
+               placeholder="Contraseña" required>
+
+        <input type="password" name="password2" class="form-control mb-4"
+               placeholder="Repetir contraseña" required>
+
+        <h5 class="mb-3 text-center">Elegí tu avatar</h5>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+
+            {% set avatars = [
+                "avatar1.png", "avatar2.png", "avatar3.png", "avatar4.png",
+                "avatar5.png", "avatar6.png", "avatar7.png", "avatar8.png",
+                "avatar9.png", "avatar10.png"
+            ] %}
+
+            {% for a in avatars %}
+                <label class="text-center" style="cursor:pointer">
+                    <input type="radio" name="avatar" value="{{ a }}"
+                           {% if loop.first %}checked{% endif %}
+                           style="display:none">
+
+                    <img src="{{ url_for('static', filename='avatars/' ~ a) }}"
+                         width="64" height="64"
+                         class="rounded-circle avatar-select">
+                </label>
+            {% endfor %}
+        </div>
+
+        <button class="btn btn-success w-100 mt-4">
+            Registrarme
+        </button>
+
+    </form>
+  </div>
+</div>
+    <div class="text-center mt-3">
+        <a href="/">⬅ Volver</a>
+    </div>
+
+</div>
+{% endblock %}

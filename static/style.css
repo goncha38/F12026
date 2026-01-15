@@ -180,3 +180,42 @@ input[type="radio"]:checked + .avatar-select {
         background-attachment: scroll;
     }
 }
+@media (max-width: 768px) {
+
+    .navbar {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 10px 14px;
+    }
+
+    .nav-left {
+        flex: 1;
+    }
+
+    .nav-toggle {
+        display: block;
+        color: var(--text);
+        font-size: 1.5rem;
+    }
+
+    .nav-user {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 8px;
+        gap: 8px;
+    }
+
+    .nav-user .username {
+        display: none;
+    }
+
+    .nav-links {
+        width: 100%;
+        margin-top: 10px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-links a {
+        padding: 10px 0;
+    }
+}
