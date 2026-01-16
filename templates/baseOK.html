@@ -25,7 +25,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
@@ -48,31 +48,14 @@
 
             {% if session.user_id %}
             <div class="d-flex align-items-center gap-2">
-                <button id="darkToggle" class="btn btn-sm btn-outline-light">
-                    🌙
-                </button>
-
-                <img
-                    src="{{ url_for('static', filename='avatars/' + session.avatar) }}"
-                    alt="avatar"
-                    class="rounded-circle"
-                    width="36"
-                    height="36"
-                >
-
-                <span class="text-white d-none d-md-inline">
-                    {{ session.user_name }}
-                </span>
-
-                <a href="/logout" class="btn btn-sm btn-outline-danger">
-                    Salir
-                </a>
+                <button id="darkToggle" class="btn btn-sm btn-outline-light">🌙</button>
+                <span class="text-white">{{ session.user_name }}</span>
+                <a href="/logout" class="btn btn-sm btn-outline-danger">Salir</a>
             </div>
             {% endif %}
         </div>
     </div>
 </nav>
-
 
 <div class="container">
     {% block content %}{% endblock %}
