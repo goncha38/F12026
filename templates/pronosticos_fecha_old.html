@@ -1,0 +1,119 @@
+<h2>Pronósticos – {{ carrera.pais }} ({{ carrera.fecha }})</h2>
+
+<h3>Resultado oficial</h3>
+<ul>
+    <li>Pole: {{ resultado.pole }}</li>
+    {% if resultado.sprint_ganador %}
+        <li>Sprint: {{ resultado.sprint_ganador }}</li>
+    {% endif %}
+    <li>P1: {{ resultado.p1 }}</li>
+    <li>P2: {{ resultado.p2 }}</li>
+    <li>P3: {{ resultado.p3 }}</li>
+</ul>
+
+<p>
+🟢 Acierto exacto &nbsp; | &nbsp;
+🟡 Piloto en podio (posición incorrecta)
+</p>
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 6px 10px;
+        text-align: center;
+    }
+    .exacto {
+        background-color: #c8f7c5;
+        font-weight: bold;
+    }
+    .parcial {
+        background-color: #fff3b0;
+    }
+    .ganador {
+    background-color: #d6e9ff;
+    border: 2px solid #2c7be5;
+}
+.ganador td:first-child::after {
+    content: " 🏆";
+}
+</style>
+
+
+<hr>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Pole</th>
+            {% if resultado.sprint_ganador %}
+                <th>Sprint</th>
+            {% endif %}
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>Puntos</th>
+        </tr>
+    </thead>
+   <tbody>
+{% for p in pronosticos | sort(attribute='puntos', reverse=True) %}
+<tr class="{% if loop.first %}ganador{% endif %}">
+    <td>
+        {{ p.usuario }}
+        {% if loop.first %} 🏆{% endif %}
+    </td>
+
+    {# POLE #}
+    <td class="{% if p.pole == resultado.pole %}exacto{% endif %}">
+        {{ p.pole }}
+    </td>
+
+    {# SPRINT (si existe) #}
+    {% if resultado.sprint_ganador %}
+    <td class="{% if p.sprint_ganador == resultado.sprint_ganador %}exacto{% endif %}">
+        {{ p.sprint_ganador }}
+    </td>
+    {% endif %}
+
+    {# P1 #}
+    <td class="
+        {% if p.p1 == resultado.p1 %}
+            exacto
+        {% elif p.p1 in [resultado.p1, resultado.p2, resultado.p3] %}
+            podio
+        {% endif %}
+    ">
+        {{ p.p1 }}
+    </td>
+
+    {# P2 #}
+    <td class="
+        {% if p.p2 == resultado.p2 %}
+            exacto
+        {% elif p.p2 in [resultado.p1, resultado.p2, resultado.p3] %}
+            podio
+        {% endif %}
+    ">
+        {{ p.p2 }}
+    </td>
+
+    {# P3 #}
+    <td class="
+        {% if p.p3 == resultado.p3 %}
+            exacto
+        {% elif p.p3 in [resultado.p1, resultado.p2, resultado.p3] %}
+            podio
+        {% endif %}
+    ">
+        {{ p.p3 }}
+    </td>
+
+    <td><strong>{{ p.puntos }}</strong></td>
+</tr>
+{% endfor %}
+</tbody>
+
+
+</table>

@@ -853,24 +853,26 @@ def ranking():
     if "user_id" not in session:
         return render_template("index.html", error="Login incorrecto")
 
-
     conn = get_db()
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT
-            u.nombre,
-            COALESCE(SUM(p.puntos), 0) AS total_puntos
+        SELECT u.nombre,
+               COALESCE(SUM(p.puntos), 0) AS puntos
         FROM usuarios u
         LEFT JOIN pronosticos p ON p.user_id = u.id
         GROUP BY u.id, u.nombre
-        ORDER BY total_puntos DESC
+        ORDER BY puntos DESC
     """)
 
     ranking = cur.fetchall()
     conn.close()
 
-    return render_template("ranking.html", ranking=ranking)
+    return render_template(
+        "ranking.html",
+        ranking=ranking
+    )
+
 
 # -------- CONTROL DE PRONÓSTICOS (MATRIZ) --------
 @app.route("/control_pronosticos")

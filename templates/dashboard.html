@@ -2,15 +2,18 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+
+<!-- ================= ÚLTIMA CARRERA ================= -->
 {% if carrera_anterior %}
 <div class="card mt-4">
     <div class="card-body">
-        <h4>
-            🏁 Última carrera:
-            {{ carrera_anterior.pais }} ({{ carrera_anterior.fecha }})
+
+        <h4 class="mb-3">
+            🏁 Última carrera – {{ carrera_anterior.pais }}
+            <small class="text-muted">({{ carrera_anterior.fecha }})</small>
         </h4>
 
-        <table class="table table-sm table-striped mt-3">
+        <table class="table table-sm table-striped">
             <thead>
                 <tr>
                     <th>#</th>
@@ -30,81 +33,61 @@
         </table>
 
         <div class="text-end">
-{% if carrera_anterior %}
-    <h4>Última carrera: {{ carrera_anterior.pais }}</h4>
-
-    <a href="/fecha/{{ carrera_anterior.id }}"
-       class="btn btn-outline-primary btn-sm">
-        Ver detalle completo
-    </a>
-{% endif %}
-
-
+            <a href="/fecha/{{ carrera_anterior.id }}"
+               class="btn btn-outline-primary btn-sm">
+                Ver detalle completo
             </a>
         </div>
+
     </div>
 </div>
 {% endif %}
 
-
+<!-- ================= RACE WEEK ================= -->
 {% if carrera %}
-<h2 class="mb-3">🏁 Race Week!</h2>
+<div class="card race-card mt-4 shadow-sm">
+    <div class="card-body text-center">
 
-<div class="card race-card mb-4 shadow-sm">
-    <div class="card-body">
+        <h3 class="mb-2">🏎️ Race Week</h3>
 
-        <h4 class="card-title text-center">
+        <h4 class="mb-3">
             {{ carrera.autodromo }} – {{ carrera.pais }}
         </h4>
 
         {% if carrera.imagen %}
         <img src="{{ url_for('static', filename='circuitos/' + carrera.imagen) }}"
-             class="img-fluid rounded my-3">
+             class="img-fluid rounded mb-3"
+             style="max-height: 250px;">
         {% endif %}
 
         {% if horas_restantes is not none %}
-            <div class="alert alert-warning text-center">
+            <div class="alert alert-warning">
                 ⏳ Quedan <strong>{{ horas_restantes }} horas</strong> para cerrar el pronóstico
             </div>
         {% else %}
-            <div class="alert alert-secondary text-center">
+            <div class="alert alert-secondary">
                 Fecha límite aún no definida
             </div>
         {% endif %}
 
-        <div class="d-grid gap-2">
-            <a href="/pronostico/{{ carrera.id }}" class="btn btn-primary btn-lg">
-                {% if ya_pronosticado %}
-                    ✏️ Ver / Editar pronóstico
-                {% else %}
-                    📝 Cargar pronóstico
-                {% endif %}
-            </a>
-        </div>
+        <a href="/pronostico/{{ carrera.id }}"
+           class="btn btn-primary btn-lg">
+            {% if ya_pronosticado %}
+                ✏️ Ver / Editar pronóstico
+            {% else %}
+                📝 Cargar pronóstico
+            {% endif %}
+        </a>
 
     </div>
 </div>
-
 {% else %}
-<div class="alert alert-secondary text-center">
+<div class="alert alert-secondary text-center mt-4">
     ⏸ No hay Race Week activa
 </div>
 {% endif %}
-<div class="d-grid gap-2 mt-3">
-    <a href="/ranking" class="btn btn-outline-dark">
-        🏆 Ver Ranking General
-    </a>
-</div>
-{% if carrera_anterior %}
-<h3>Última carrera: {{ carrera_anterior.pais }}</h3>
-<a href="/fecha/{{ carrera_anterior.id }}" class="btn btn-sm btn-outline-primary">
-    Ver detalle completo
-</a>
-{% else %}
-<p>No hay carreras finalizadas aún</p>
-{% endif %}
 
-
+<!-- ================= PRÓXIMA CARRERA ================= -->
 <h4 class="mt-4">Próximas carreras</h4>
 
 <div class="carreras-lista">
@@ -125,5 +108,12 @@
     {% endfor %}
 </div>
 
+
+<!-- ================= RANKING ================= -->
+<div class="d-grid gap-2 mt-4">
+    <a href="/ranking" class="btn btn-outline-dark">
+        🏆 Ver Ranking General
+    </a>
+</div>
 
 {% endblock %}

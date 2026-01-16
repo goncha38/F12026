@@ -219,3 +219,21 @@ input[type="radio"]:checked + .avatar-select {
         padding: 10px 0;
     }
 }
+<style>
+.bg-exacto {
+    background-color: #c8f7c5 !important; /* verde */
+    font-weight: bold;
+}
+
+.bg-parcial {
+    background-color: #d6e9ff !important; /* celeste */
+}
+</style>
+td.bg-exacto {
+    background-color: #c8f7c5 !important;
+    font-weight: bold;
+}
+
+td.bg-parcial {
+    background-color: #d6e9ff !important;
+}
