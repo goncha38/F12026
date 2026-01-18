@@ -2,38 +2,74 @@
 {% block title %}Ranking General{% endblock %}
 
 {% block content %}
-<h2 class="mb-4 text-center">🏆 Ranking General</h2>
 
-<table class="table table-hover align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>#</th>
-            <th>Participante</th>
-            <th>Puntos</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in ranking %}
-        <tr
-            {% if loop.index == 1 %} class="table-warning fw-bold"
-            {% elif loop.index == 2 %} class="table-secondary fw-bold"
-            {% elif loop.index == 3 %} class="table-light fw-bold"
-            {% endif %}
-        >
-            <td>
-                {% if loop.index == 1 %}🥇
-                {% elif loop.index == 2 %}🥈
-                {% elif loop.index == 3 %}🥉
-                {% else %}{{ loop.index }}
+<h2 class="mb-3 text-center">🏆 Ranking General</h2>
+
+<!-- ================= DESKTOP: TABLA ================= -->
+<div class="d-none d-md-block">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Participante</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in ranking %}
+            <tr
+                {% if loop.index == 1 %} class="table-warning fw-bold"
+                {% elif loop.index == 2 %} class="table-secondary fw-bold"
+                {% elif loop.index == 3 %} class="table-light fw-bold"
                 {% endif %}
-            </td>
+            >
+                <td>
+                    {% if loop.index == 1 %}🥇
+                    {% elif loop.index == 2 %}🥈
+                    {% elif loop.index == 3 %}🥉
+                    {% else %}{{ loop.index }}
+                    {% endif %}
+                </td>
+                <td>{{ r.nombre }}</td>
+                <td><strong>{{ r.puntos }}</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-            <td>{{ r.nombre }}</td>
-            <td><strong>{{ r.puntos }}</strong></td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<!-- ================= MOBILE: CARDS ================= -->
+<div class="d-md-none">
+    {% for r in ranking %}
+    <div class="card mb-2 shadow-sm
+        {% if loop.index == 1 %} border-warning
+        {% elif loop.index == 2 %} border-secondary
+        {% elif loop.index == 3 %} border-light
+        {% endif %}
+    ">
+        <div class="card-body d-flex justify-content-between align-items-center">
 
-</table>
+            <div>
+                <div class="fw-bold">
+                    {% if loop.index == 1 %}🥇
+                    {% elif loop.index == 2 %}🥈
+                    {% elif loop.index == 3 %}🥉
+                    {% else %}#{{ loop.index }}
+                    {% endif %}
+                    {{ r.nombre }}
+                </div>
+            </div>
+
+            <div class="text-end">
+                <div class="fw-bold fs-5">
+                    {{ r.puntos }}
+                </div>
+                <small class="text-muted">pts</small>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
 {% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Ranking General{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 text-center">🏆 Ranking General</h2>
+
+<table class="table table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Participante</th>
+            <th>Puntos</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in ranking %}
+        <tr
+            {% if loop.index == 1 %} class="table-warning fw-bold"
+            {% elif loop.index == 2 %} class="table-secondary fw-bold"
+            {% elif loop.index == 3 %} class="table-light fw-bold"
+            {% endif %}
+        >
+            <td>
+                {% if loop.index == 1 %}🥇
+                {% elif loop.index == 2 %}🥈
+                {% elif loop.index == 3 %}🥉
+                {% else %}{{ loop.index }}
+                {% endif %}
+            </td>
+
+            <td>{{ r.nombre }}</td>
+            <td><strong>{{ r.puntos }}</strong></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}
