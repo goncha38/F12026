@@ -9,8 +9,8 @@
     --card-bg: rgba(255,255,255,0.85);
     --border: #dee2e6;
 
-    --primary: #dc0000;
-    --primary-hover: #ff3b3b;
+    --primary: #f1e8e849;
+    --primary-hover: #ece8e8ab;
 }
 
 /* DARK MODE */
@@ -236,4 +236,15 @@ td.bg-exacto {
 
 td.bg-parcial {
     background-color: #d6e9ff !important;
+}
+@media (max-width: 768px) {
+    .carreras-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .carrera-card {
+        width: 100%;
+    }
 }

@@ -4,6 +4,8 @@
 {% block content %}
 
 <!-- ================= ÚLTIMA CARRERA ================= -->
+
+
 {% if carrera_anterior %}
 <div class="card mt-4">
     <div class="card-body">
@@ -13,24 +15,41 @@
             <small class="text-muted">({{ carrera_anterior.fecha }})</small>
         </h4>
 
-        <table class="table table-sm table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Usuario</th>
-                    <th>Puntos</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in pronosticos_fecha %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ p.usuario }}</td>
-                    <td><strong>{{ p.puntos }}</strong></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- DESKTOP: TU TABLA ORIGINAL -->
+        <div class="d-none d-md-block">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Puntos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pronosticos_fecha %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ p.usuario }}</td>
+                        <td><strong>{{ p.puntos }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- MOBILE: NUEVA VISTA, SIN TOCAR TU CSS -->
+        <div class="d-md-none">
+            {% for p in pronosticos_fecha %}
+            <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ loop.index }}. {{ p.usuario }}</strong>
+                </div>
+                <span class="badge bg-primary">
+                    {{ p.puntos }} pts
+                </span>
+            </div>
+            {% endfor %}
+        </div>
 
         <div class="text-end">
             <a href="/fecha/{{ carrera_anterior.id }}"
@@ -42,36 +61,37 @@
     </div>
 </div>
 {% endif %}
-
-<!-- ================= RACE WEEK ================= -->
-{% if carrera %}
+    <!-- RACE WEEK -->
+<a href="/pronostico/{{ carrera.id }}"
+   class="btn btn-primary btn-lg w-100">
+    {% if carrera %}
 <div class="card race-card mt-4 shadow-sm">
     <div class="card-body text-center">
 
         <h3 class="mb-2">🏎️ Race Week</h3>
 
-        <h4 class="mb-3">
+        <h5 class="mb-3">
             {{ carrera.autodromo }} – {{ carrera.pais }}
-        </h4>
+        </h5>
 
         {% if carrera.imagen %}
         <img src="{{ url_for('static', filename='circuitos/' + carrera.imagen) }}"
              class="img-fluid rounded mb-3"
-             style="max-height: 250px;">
+             style="max-height: 200px;">
         {% endif %}
 
         {% if horas_restantes is not none %}
-            <div class="alert alert-warning">
-                ⏳ Quedan <strong>{{ horas_restantes }} horas</strong> para cerrar el pronóstico
+            <div class="alert alert-warning py-2">
+                ⏳ Quedan <strong>{{ horas_restantes }} horas</strong>
             </div>
         {% else %}
-            <div class="alert alert-secondary">
+            <div class="alert alert-secondary py-2">
                 Fecha límite aún no definida
             </div>
         {% endif %}
 
         <a href="/pronostico/{{ carrera.id }}"
-           class="btn btn-primary btn-lg">
+           class="btn btn-primary btn-lg w-100">
             {% if ya_pronosticado %}
                 ✏️ Ver / Editar pronóstico
             {% else %}
@@ -86,32 +106,21 @@
     ⏸ Esta semana no hay carrera 😴
 </div>
 {% endif %}
+<h4 class="mt-4">📅 Próximas carreras</h4>
 
-<!-- ================= RANKING ================= -->
-<div class="d-grid gap-2 mt-4">
-    <a href="/ranking" class="btn btn-outline-dark">
-        🏆 Ver Ranking General
-    </a>
-</div>
-<!-- ================= PRÓXIMA CARRERA ================= -->
-<h4 class="mt-4">Próximas carreras</h4>
-
-<div class="carreras-lista">
+<div class="row">
     {% for c in proximas %}
-    <div class="carrera-card">
-        <div class="carrera-titulo">
-            🏁 {{ c.pais }}
-        </div>
-
-        <div class="carrera-fecha">
-            📅 {{ c.fecha }}
-        </div>
-
-        <div class="carrera-estado">
-            🔒 Pronóstico cerrado
+    <div class="col-12 col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">🏁 {{ c.pais }}</h5>
+                <p class="mb-1">📅 {{ c.fecha }}</p>
+                <span class="badge bg-secondary">
+                    🔒 Pronóstico cerrado
+                </span>
+            </div>
         </div>
     </div>
     {% endfor %}
 </div>
-
 {% endblock %}
