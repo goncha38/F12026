@@ -2,14 +2,14 @@
    VARIABLES DE TEMA
 ========================= */
 :root {
-    --bg-overlay: rgba(255,255,255,0.65);
-    --bg: #f8f9fa;
-    --text: #212529;
+    --bg-overlay: rgba(255, 255, 255, 0.228);
+    --bg: #f8f9fa54;
+    --text: #141719;
 
-    --card-bg: rgba(255,255,255,0.85);
+    --card-bg: rgba(255, 255, 255, 0.155);
     --border: #dee2e6;
 
-    --primary: #f1e8e849;
+    --primary: #f1e8e80c;
     --primary-hover: #ece8e8ab;
 }
 
